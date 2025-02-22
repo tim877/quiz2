@@ -1,0 +1,15 @@
+E:\Skola Kod\Backend 1\quiz2\QuizApp\bin\Debug\net9.0\QuizApp.exe
+E:\Skola Kod\Backend 1\quiz2\QuizApp\bin\Debug\net9.0\QuizApp.deps.json
+E:\Skola Kod\Backend 1\quiz2\QuizApp\bin\Debug\net9.0\QuizApp.runtimeconfig.json
+E:\Skola Kod\Backend 1\quiz2\QuizApp\bin\Debug\net9.0\QuizApp.dll
+E:\Skola Kod\Backend 1\quiz2\QuizApp\bin\Debug\net9.0\QuizApp.pdb
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.GeneratedMSBuildEditorConfig.editorconfig
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.AssemblyInfoInputs.cache
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.AssemblyInfo.cs
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.csproj.CoreCompileInputs.cache
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.sourcelink.json
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.dll
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\refint\QuizApp.dll
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.pdb
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\QuizApp.genruntimeconfig.cache
+E:\Skola Kod\Backend 1\quiz2\QuizApp\obj\Debug\net9.0\ref\QuizApp.dll
