@@ -15,42 +15,32 @@ namespace ConsoleQuizApp
             Console.Write("Enter a password: ");
             string password = Console.ReadLine();
 
-            User existingUser = users.Find(u => u.Username == username);
-            if (existingUser != null)
-            {
-                Console.WriteLine("Username already exists. Press Enter to return to the menu.");
-                Console.ReadLine();
-                return null;
-            }
-
             User newUser = new User(username, password);
             users.Add(newUser);
-            Console.WriteLine("Registration successful! Press Enter to log in.");
-            Console.ReadLine();
+
+            Console.WriteLine("Registration successful!");
             return newUser;
         }
 
         public User Login()
         {
             Console.Clear();
-            Console.Write("Enter your username: ");
+            Console.Write("Enter username: ");
             string username = Console.ReadLine();
-            Console.Write("Enter your password: ");
+            Console.Write("Enter password: ");
             string password = Console.ReadLine();
 
-            User user = users.Find(u => u.Username == username && u.Password == password);
-            if (user != null)
+            foreach (var user in users)
             {
-                Console.WriteLine("Login successful! Press Enter to continue.");
-                Console.ReadLine();
-                return user;
+                if (user.Username == username && user.Password == password)
+                {
+                    Console.WriteLine("Login successful!");
+                    return user;
+                }
             }
-            else
-            {
-                Console.WriteLine("Invalid username or password. Press Enter to try again.");
-                Console.ReadLine();
-                return null;
-            }
+
+            Console.WriteLine("Invalid credentials. Please try again.");
+            return null;
         }
     }
 }

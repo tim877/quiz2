@@ -1,18 +1,20 @@
-using System.Collections.Generic;
-
 namespace ConsoleQuizApp
 {
-    public class Quiz
+    class Quiz
     {
-        public string Title { get; }
-        public List<Question> Questions { get; }
+        public string Title { get; set; }
+        public List<Question> Questions { get; set; }
+        public string Creator { get; set; }
 
-        public Quiz(string title)
+        // Constructor to accept both title and creator
+        public Quiz(string title, string creator)
         {
             Title = title;
+            Creator = creator;
             Questions = new List<Question>();
         }
 
+        // Method to add a new question
         public void AddQuestion(string questionText, string correctAnswer)
         {
             Questions.Add(new Question(questionText, correctAnswer));

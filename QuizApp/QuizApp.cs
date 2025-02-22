@@ -57,7 +57,6 @@ namespace ConsoleQuizApp
                 }
                 else
                 {
-                    // This branch should not be reached since we call QuizMenu when a user is logged in.
                     QuizMenu(quizzes);
                 }
             }
@@ -72,7 +71,7 @@ namespace ConsoleQuizApp
                 Console.WriteLine($"Welcome, {loggedInUser.Username}!");
                 Console.WriteLine("1. Create a new quiz");
                 Console.WriteLine("2. Play a quiz");
-                Console.WriteLine("3. View Leaderboard"); // New option for leaderboard
+                Console.WriteLine("3. View Leaderboard"); 
                 Console.WriteLine("4. Logout");
                 Console.Write("Choose an option: ");
                 string choice = Console.ReadLine();
@@ -113,7 +112,8 @@ namespace ConsoleQuizApp
             Console.Write("Enter quiz title: ");
             string title = Console.ReadLine();
 
-            Quiz quiz = new Quiz(title);
+            // Pass the logged-in user's name when creating the quiz
+            Quiz quiz = new Quiz(title, loggedInUser.Username);  
 
             while (true)
             {
@@ -134,65 +134,64 @@ namespace ConsoleQuizApp
         }
 
         // Function to play a quiz
-        // Function to play a quiz
-static void PlayQuiz(List<Quiz> quizzes)
-{
-    Console.Clear();
-    if (quizzes.Count == 0)
-    {
-        Console.WriteLine("No quizzes available. Please create a quiz first.");
-        Console.WriteLine("Press Enter to return to the menu...");
-        Console.ReadLine();
-        return;
-    }
-
-    Console.WriteLine("Available quizzes:");
-    for (int i = 0; i < quizzes.Count; i++)
-    {
-        Console.WriteLine($"{i + 1}. {quizzes[i].Title}");
-    }
-
-    Console.Write("Choose a quiz by number: ");
-    if (!int.TryParse(Console.ReadLine(), out int quizIndex))
-    {
-        Console.WriteLine("Invalid input. Returning to menu.");
-        Console.WriteLine("Press Enter to continue...");
-        Console.ReadLine();
-        return;
-    }
-    quizIndex--;
-
-    if (quizIndex < 0 || quizIndex >= quizzes.Count)
-    {
-        Console.WriteLine("Invalid choice, returning to menu.");
-        Console.WriteLine("Press Enter to continue...");
-        Console.ReadLine();
-        return;
-    }
-
-    Quiz selectedQuiz = quizzes[quizIndex];
-    int score = 0;
-
-    Console.Clear();
-    foreach (var question in selectedQuiz.Questions)
-    {
-        Console.WriteLine(question.QuestionText);
-        Console.Write("Your answer: ");
-        string userAnswer = Console.ReadLine();
-
-        if (userAnswer.Equals(question.CorrectAnswer, StringComparison.OrdinalIgnoreCase))
+        static void PlayQuiz(List<Quiz> quizzes)
         {
-            score++;
+            Console.Clear();
+            if (quizzes.Count == 0)
+            {
+                Console.WriteLine("No quizzes available. Please create a quiz first.");
+                Console.WriteLine("Press Enter to return to the menu...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("Available quizzes:");
+            for (int i = 0; i < quizzes.Count; i++)
+            {
+                // Display the creator's name next to the quiz title
+                Console.WriteLine($"{i + 1}. {quizzes[i].Title} (Created by: {quizzes[i].Creator})");
+            }
+
+            Console.Write("Choose a quiz by number: ");
+            if (!int.TryParse(Console.ReadLine(), out int quizIndex))
+            {
+                Console.WriteLine("Invalid input. Returning to menu.");
+                Console.WriteLine("Press Enter to continue...");
+                Console.ReadLine();
+                return;
+            }
+            quizIndex--;
+
+            if (quizIndex < 0 || quizIndex >= quizzes.Count)
+            {
+                Console.WriteLine("Invalid choice, returning to menu.");
+                Console.WriteLine("Press Enter to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Quiz selectedQuiz = quizzes[quizIndex];
+            int score = 0;
+
+            Console.Clear();
+            foreach (var question in selectedQuiz.Questions)
+            {
+                Console.WriteLine(question.QuestionText);
+                Console.Write("Your answer: ");
+                string userAnswer = Console.ReadLine();
+
+                if (userAnswer.Equals(question.CorrectAnswer, StringComparison.OrdinalIgnoreCase))
+                {
+                    score++;
+                }
+            }
+
+            // Add score to leaderboard
+            leaderboard.AddScore(loggedInUser.Username, score, selectedQuiz.Title);
+
+            Console.WriteLine($"Your score: {score} out of {selectedQuiz.Questions.Count}");
+            Console.WriteLine("Press Enter to return to the menu...");
+            Console.ReadLine();
         }
-    }
-
-    // Add score to leaderboard, along with the quiz name
-    leaderboard.AddScore(loggedInUser.Username, score, selectedQuiz.Title);
-
-    Console.WriteLine($"Your score: {score} out of {selectedQuiz.Questions.Count}");
-    Console.WriteLine("Press Enter to return to the menu...");
-    Console.ReadLine();
-}
-
     }
 }

@@ -3,38 +3,41 @@ using System.Collections.Generic;
 
 namespace ConsoleQuizApp
 {
-    public class Leaderboard
+    class Leaderboard
     {
-        // Store user scores along with the quiz name
-        private List<(string username, int score, string quizName)> leaderboardEntries = new List<(string, int, string)>();
+        private List<ScoreEntry> scoreEntries = new List<ScoreEntry>();
 
-        // Add a score entry along with the quiz name
-        public void AddScore(string username, int score, string quizName)
+        public void AddScore(string username, int score, string quizTitle)
         {
-            leaderboardEntries.Add((username, score, quizName));
+            scoreEntries.Add(new ScoreEntry(username, score, quizTitle));
         }
 
-        // Display the leaderboard
-        // Display the leaderboard
-public void DisplayLeaderboard()
-{
-    Console.Clear(); // Clears the console before displaying the leaderboard
+        public void DisplayLeaderboard()
+        {
+            Console.Clear();
+            Console.WriteLine("Leaderboard:");
 
-    if (leaderboardEntries.Count == 0)
-    {
-        Console.WriteLine("No scores yet.");
-        return;
+            foreach (var entry in scoreEntries)
+            {
+                Console.WriteLine($"{entry.Username} - {entry.Score} - Quiz: {entry.QuizTitle}");
+            }
+
+            Console.WriteLine("Press Enter to return to the menu...");
+            Console.ReadLine();
+        }
     }
 
-    // Sort the leaderboard in descending order of score
-    leaderboardEntries.Sort((x, y) => y.score.CompareTo(x.score));
-
-    Console.WriteLine("Leaderboard:");
-    foreach (var entry in leaderboardEntries)
+    class ScoreEntry
     {
-        Console.WriteLine($"{entry.username}: {entry.score} points in {entry.quizName}");
-    }
-}
+        public string Username { get; set; }
+        public int Score { get; set; }
+        public string QuizTitle { get; set; }
 
+        public ScoreEntry(string username, int score, string quizTitle)
+        {
+            Username = username;
+            Score = score;
+            QuizTitle = quizTitle;
+        }
     }
 }
