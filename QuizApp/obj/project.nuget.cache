@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "DS8SlGF2/Pk=",
+  "dgSpecHash": "urMfy3Ihwr4=",
   "success": true,
   "projectFilePath": "E:\\Skola Kod\\Backend 1\\quiz2\\QuizApp\\QuizApp.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\skate\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\skate\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\skate\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "C:\\Users\\skate\\.nuget\\packages\\microsoft.build.framework\\17.8.3\\microsoft.build.framework.17.8.3.nupkg.sha512",

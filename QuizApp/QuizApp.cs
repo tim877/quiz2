@@ -41,7 +41,7 @@ namespace ConsoleQuizApp
                         // Only proceed if registration was successful
                         if (loggedInUser != null)
                         {
-                            QuizMenu(quizzes);
+                            //QuizMenu(quizzes);
                         }
                     }
                     else if (choice == "3")
@@ -71,14 +71,14 @@ namespace ConsoleQuizApp
                 Console.WriteLine($"Welcome, {loggedInUser.Username}!");
                 Console.WriteLine("1. Create a new quiz");
                 Console.WriteLine("2. Play a quiz");
-                Console.WriteLine("3. View Leaderboard"); 
+                Console.WriteLine("3. View Leaderboard");
                 Console.WriteLine("4. Logout");
                 Console.Write("Choose an option: ");
                 string choice = Console.ReadLine();
 
                 if (choice == "1")
                 {
-                    CreateQuiz(quizzes);
+                    ///CreateQuiz(quizzes);
                 }
                 else if (choice == "2")
                 {
@@ -106,7 +106,7 @@ namespace ConsoleQuizApp
         }
 
         // Function to create a quiz
-        static void CreateQuiz(List<Quiz> quizzes)
+        /*static void CreateQuiz(List<Quiz> quizzes)
         {
             Console.Clear();
             Console.Write("Enter quiz title: ");
@@ -131,7 +131,7 @@ namespace ConsoleQuizApp
             Console.WriteLine("Quiz created successfully!");
             Console.WriteLine("Press Enter to return to the menu...");
             Console.ReadLine();
-        }
+        }*/
 
         // Function to play a quiz
         static void PlayQuiz(List<Quiz> quizzes)
@@ -149,7 +149,7 @@ namespace ConsoleQuizApp
             for (int i = 0; i < quizzes.Count; i++)
             {
                 // Display the creator's name next to the quiz title
-                Console.WriteLine($"{i + 1}. {quizzes[i].Title} (Created by: {quizzes[i].Creator})");
+                // Console.WriteLine($"{i + 1}. {quizzes[i].Title} (Created by: {quizzes[i].Creator})");
             }
 
             Console.Write("Choose a quiz by number: ");
@@ -174,7 +174,7 @@ namespace ConsoleQuizApp
             int score = 0;
 
             Console.Clear();
-            foreach (var question in selectedQuiz.Questions)
+            /*foreach (var question in selectedQuiz.Questions)
             {
                 Console.WriteLine(question.QuestionText);
                 Console.Write("Your answer: ");
@@ -184,12 +184,12 @@ namespace ConsoleQuizApp
                 {
                     score++;
                 }
-            }
+            }*/
 
             // Add score to leaderboard
             leaderboard.AddScore(loggedInUser.Username, score, selectedQuiz.Title);
 
-            Console.WriteLine($"Your score: {score} out of {selectedQuiz.Questions.Count}");
+            // Console.WriteLine($"Your score: {score} out of {selectedQuiz.Questions.Count}");
             Console.WriteLine("Press Enter to return to the menu...");
             Console.ReadLine();
         }

@@ -21,12 +21,6 @@ public class AppDbContext : DbContext
             .WithMany(u => u.Quizzes)
             .HasForeignKey(q => q.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        // Leaderboard -> Quiz (Many-to-One)
-        /*modelBuilder.Entity<Leaderboard>()
-            .HasOne(l => l.Quiz)
-            .WithMany()
-            .HasForeignKey(l => l.QuizId)
-            .OnDelete(DeleteBehavior.Cascade);*/
+            
     }
 }
