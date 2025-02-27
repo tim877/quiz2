@@ -1,23 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json.Linq;
+
 namespace ConsoleQuizApp
 {
-    class Quiz
+    public class Quiz
     {
+        public int Id { get; set; }
+
+        [Required]
         public string Title { get; set; }
-        public List<Question> Questions { get; set; }
-        public string Creator { get; set; }
 
-        // Constructor to accept both title and creator
-        public Quiz(string title, string creator)
-        {
-            Title = title;
-            Creator = creator;
-            Questions = new List<Question>();
-        }
+        [Required]
+        public User User { get; set; }
 
-        // Method to add a new question
-        public void AddQuestion(string questionText, string correctAnswer)
+        [Column(TypeName = "jsonb")]
+        public string Data { get; set; } = "{}";
+        public JObject DataJson
         {
-            Questions.Add(new Question(questionText, correctAnswer));
+            get => JObject.Parse(Data);
+            set => Data = value.ToString();
         }
     }
 }
