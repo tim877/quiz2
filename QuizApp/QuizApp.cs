@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace ConsoleQuizApp
 {
@@ -93,9 +95,8 @@ namespace ConsoleQuizApp
                 }
                 else if (choice == "3")
                 {
-                    leaderboard.DisplayLeaderboard(); // Display the leaderboard
-                    Console.WriteLine("Press Enter to return to the menu...");
-                    Console.ReadLine();
+                    ViewLeaderboard();
+
                 }
                 else if (choice == "4")
                 {
@@ -112,8 +113,20 @@ namespace ConsoleQuizApp
             }
         }
 
+        private void ViewLeaderboard()
+        {
+            Console.Clear();
+
+            Leaderboard leaderboard = new Leaderboard();
+            List<QuizUser> leaderboardList = leaderboard.getLeaderboard();
+            leaderboardList.ForEach(l => Console.WriteLine($"User: {l.User.Username} Quiz: {l.Quiz.Title} Score: {l.Score} Max Score: {l.MaxScore} Date: {l.CreatedAt}"));
+
+            Console.WriteLine("Press Enter to return to the menu...");
+            Console.ReadLine();
+        }
+
         // Function to create a quiz
-        void CreateQuiz()
+        private void CreateQuiz()
         {
             Console.Clear();
             Console.Write("Enter quiz title: ");
@@ -162,21 +175,61 @@ namespace ConsoleQuizApp
         }
 
         // Function to play a quiz
-        void PlayQuiz()
+        private void PlayQuiz()
         {
             Console.Clear();
             List<Quiz> quizzes = _context.Quizzes.ToList<Quiz>();
             int counter = 1;
+            JObject listId = new JObject();
             foreach (var q in quizzes)
             {
                 Console.WriteLine($"{counter}. {q.Title}");
+                listId.Add(counter.ToString(), q.Id);
+                counter++;
             }
 
+            Console.WriteLine("Enter quiz number.");
+            string input = Console.ReadLine();
+            int QuizId = (int)listId.GetValue(input);
 
+            Quiz userQuiz = _context.Quizzes.Single(q => q.Id == QuizId);
 
+            Console.Clear();
+            Console.WriteLine($"Welcome to quiz: {userQuiz.Title}");
 
+            int correctCounter = 0;
+            foreach (var q in userQuiz.Question)
+            {
+                Console.Write("Question: ");
+                Console.WriteLine(q.QuestionText);
+                Console.Write("Answer: ");
+                string answer = Console.ReadLine();
+                if (answer == q.CorrectAnswer)
+                {
+                    correctCounter++;
+                }
+            }
+            Console.WriteLine($"\nYou got {correctCounter} out of {userQuiz.Question.Count} questions correct.");
 
-            Console.WriteLine("Press Enter to return to the menu...");
+            QuizUser quizUser = new QuizUser
+            {
+                Score = correctCounter,
+                MaxScore = userQuiz.Question.Count,
+                UserId = loggedInUser.Id,
+                QuizId = userQuiz.Id
+            };
+            _context.QuizUsers.Add(quizUser);
+            int CommitStatus = SaveChanges();
+            if (CommitStatus != 0)
+            {
+                Console.WriteLine("\nResult saved successfully!");
+            }
+            else
+            {
+                Console.WriteLine("\nFailed to save result.");
+            }
+
+            Console.WriteLine("\nPress Enter to return to the menu...");
             Console.ReadLine();
         }
         private int SaveChanges()

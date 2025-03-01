@@ -1,43 +1,28 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleQuizApp
 {
     class Leaderboard
     {
-        private List<ScoreEntry> scoreEntries = new List<ScoreEntry>();
+        private AppDbContext _context;
 
-        public void AddScore(string username, int score, string quizTitle)
+        public Leaderboard()
         {
-            scoreEntries.Add(new ScoreEntry(username, score, quizTitle));
+            _context = new AppDbContext();
         }
 
-        public void DisplayLeaderboard()
+        public List<QuizUser> getLeaderboard()
         {
-            Console.Clear();
-            Console.WriteLine("Leaderboard:");
+            List<QuizUser> quiz = _context.QuizUsers
+            .OrderByDescending(q => q.Score)
+            .Include(q => q.Quiz)
+            .Include(q => q.User)
+            .Take(3)
+            .ToList();
 
-            foreach (var entry in scoreEntries)
-            {
-                Console.WriteLine($"{entry.Username} - {entry.Score} - Quiz: {entry.QuizTitle}");
-            }
-
-            Console.WriteLine("Press Enter to return to the menu...");
-            Console.ReadLine();
-        }
-    }
-
-    class ScoreEntry
-    {
-        public string Username { get; set; }
-        public int Score { get; set; }
-        public string QuizTitle { get; set; }
-
-        public ScoreEntry(string username, int score, string quizTitle)
-        {
-            Username = username;
-            Score = score;
-            QuizTitle = quizTitle;
+            return quiz;
         }
     }
 }
