@@ -19,9 +19,9 @@ namespace ConsoleQuizApp
         public string Data { get; set; } = "{}";
 
         [NotMapped]
-        public Question Question
+        public List<Question> Question
         {
-            get => JsonConvert.DeserializeObject<Question>(Data);
+            get => JsonConvert.DeserializeObject<List<Question>>(Data);
             set => Data = JsonConvert.SerializeObject(value);
         }
     }

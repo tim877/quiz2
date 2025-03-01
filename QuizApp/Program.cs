@@ -6,7 +6,8 @@ namespace ConsoleQuizApp
     {
         static void Main()
         {
-            QuizApp.Run();
+            QuizApp quizApp = new QuizApp();
+            quizApp.Run();
         }
     }
 }
