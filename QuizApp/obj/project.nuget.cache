@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OoleyHAmpDo=",
+  "dgSpecHash": "urMfy3Ihwr4=",
   "success": true,
-  "projectFilePath": "E:\\Skola Kod\\Backend 1\\quiz2\\quizapp\\QuizApp.csproj",
+  "projectFilePath": "E:\\Skola Kod\\Backend 1\\quiz2\\QuizApp\\QuizApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\skate\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\skate\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

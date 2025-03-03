@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Skola Kod\\Backend 1\\quiz2\\quizapp\\QuizApp.csproj": {}
+    "E:\\Skola Kod\\Backend 1\\quiz2\\QuizApp\\QuizApp.csproj": {}
   },
   "projects": {
-    "E:\\Skola Kod\\Backend 1\\quiz2\\quizapp\\QuizApp.csproj": {
+    "E:\\Skola Kod\\Backend 1\\quiz2\\QuizApp\\QuizApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Skola Kod\\Backend 1\\quiz2\\quizapp\\QuizApp.csproj",
+        "projectUniqueName": "E:\\Skola Kod\\Backend 1\\quiz2\\QuizApp\\QuizApp.csproj",
         "projectName": "QuizApp",
-        "projectPath": "E:\\Skola Kod\\Backend 1\\quiz2\\quizapp\\QuizApp.csproj",
+        "projectPath": "E:\\Skola Kod\\Backend 1\\quiz2\\QuizApp\\QuizApp.csproj",
         "packagesPath": "C:\\Users\\skate\\.nuget\\packages\\",
-        "outputPath": "E:\\Skola Kod\\Backend 1\\quiz2\\quizapp\\obj\\",
+        "outputPath": "E:\\Skola Kod\\Backend 1\\quiz2\\QuizApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\skate\\AppData\\Roaming\\NuGet\\NuGet.Config"

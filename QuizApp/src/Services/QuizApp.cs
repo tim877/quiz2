@@ -8,24 +8,25 @@ namespace ConsoleQuizApp
 {
     class QuizApp
     {
-        private User loggedInUser; // Initially, no one is logged in
-        private Leaderboard leaderboard = new Leaderboard(); // Add leaderboard instance
+        private User loggedInUser; // Keeps track of the logged-in user, initially set to null
+        private Leaderboard leaderboard = new Leaderboard(); // Instance of leaderboard for displaying top scores
+        private readonly AppDbContext _context; // Database context for interacting with the database
 
-        private readonly AppDbContext _context;
-
+        // Constructor to initialize the AppDbContext
         public QuizApp()
         {
-
             _context = new AppDbContext();
         }
+
+        // Main function that runs the application
         public void Run()
         {
-            UserManager userManager = new UserManager(); // Manages user registration and login
+            UserManager userManager = new UserManager(); // Manages user login and registration
 
-            // Outer loop: Show login/register menu until a user logs in
+            // Outer loop: Displays login/register menu until a user logs in
             while (true)
             {
-                if (loggedInUser == null)
+                if (loggedInUser == null) // If no user is logged in
                 {
                     Console.Clear();
                     Console.WriteLine("Welcome to the Quiz App!");
@@ -35,27 +36,25 @@ namespace ConsoleQuizApp
                     Console.Write("Choose an option: ");
                     string choice = Console.ReadLine();
 
-                    if (choice == "1")
+                    if (choice == "1") // Login option
                     {
-                        loggedInUser = userManager.Login();
-                        // Only proceed if login was successful
-                        if (loggedInUser != null)
+                        loggedInUser = userManager.Login(); // Attempt to login
+                        if (loggedInUser != null) // Proceed if login is successful
                         {
-                            QuizMenu();
+                            QuizMenu(); // Show quiz menu
                         }
                     }
-                    else if (choice == "2")
+                    else if (choice == "2") // Register option
                     {
-                        loggedInUser = userManager.Register();
-                        // Only proceed if registration was successful
-                        if (loggedInUser != null)
+                        loggedInUser = userManager.Register(); // Attempt to register
+                        if (loggedInUser != null) // Proceed if registration is successful
                         {
                             //QuizMenu(quizzes);
                         }
                     }
-                    else if (choice == "3")
+                    else if (choice == "3") // Exit option
                     {
-                        break; // Exit application
+                        break; // Exit the application
                     }
                     else
                     {
@@ -66,12 +65,12 @@ namespace ConsoleQuizApp
                 }
                 else
                 {
-                    QuizMenu();
+                    QuizMenu(); // Show quiz menu if user is logged in
                 }
             }
         }
 
-        // Quiz menu is only accessible when logged in
+        // Quiz menu is accessible only when the user is logged in
         void QuizMenu()
         {
             while (loggedInUser != null)  // Continue until the user logs out
@@ -85,22 +84,21 @@ namespace ConsoleQuizApp
                 Console.Write("Choose an option: ");
                 string choice = Console.ReadLine();
 
-                if (choice == "1")
+                if (choice == "1") // Create new quiz
                 {
                     CreateQuiz();
                 }
-                else if (choice == "2")
+                else if (choice == "2") // Play a quiz
                 {
                     PlayQuiz();
                 }
-                else if (choice == "3")
+                else if (choice == "3") // View the leaderboard
                 {
                     ViewLeaderboard();
-
                 }
-                else if (choice == "4")
+                else if (choice == "4") // Logout
                 {
-                    loggedInUser = null; // Logout resets the user
+                    loggedInUser = null; // Reset logged-in user
                     Console.WriteLine("You have been logged out. Press Enter to return to the login menu...");
                     Console.ReadLine();
                 }
@@ -113,19 +111,19 @@ namespace ConsoleQuizApp
             }
         }
 
+        // View the leaderboard showing top users scores
         private void ViewLeaderboard()
         {
             Console.Clear();
 
-            Leaderboard leaderboard = new Leaderboard();
-            List<QuizUser> leaderboardList = leaderboard.getLeaderboard();
+            List<QuizUser> leaderboardList = leaderboard.getLeaderboard(); // Get leaderboard data
             leaderboardList.ForEach(l => Console.WriteLine($"User: {l.User.Username} Quiz: {l.Quiz.Title} Score: {l.Score} Max Score: {l.MaxScore} Date: {l.CreatedAt}"));
 
             Console.WriteLine("Press Enter to return to the menu...");
             Console.ReadLine();
         }
 
-        // Function to create a quiz
+        // Create a new quiz
         private void CreateQuiz()
         {
             Console.Clear();
@@ -137,7 +135,7 @@ namespace ConsoleQuizApp
             {
                 Console.WriteLine("Write your question? Write 'done' if finished.");
                 string question = Console.ReadLine();
-                if (question == "done")
+                if (question == "done") // Stop creating questions
                 {
                     break;
                 }
@@ -150,9 +148,10 @@ namespace ConsoleQuizApp
                     QuestionText = question,
                     CorrectAnswer = answer
                 };
-                quizList.Add(questionData);
+                quizList.Add(questionData); // Add the question to the quiz list
             }
 
+            // Create the quiz and add it to the database
             Quiz quiz = new Quiz
             {
                 Title = title,
@@ -160,7 +159,7 @@ namespace ConsoleQuizApp
                 Question = quizList
             };
             _context.Quizzes.Add(quiz);
-            int saveStatus = SaveChanges();
+            int saveStatus = SaveChanges(); // Save changes to the database
 
             if (saveStatus > 0)
             {
@@ -174,25 +173,25 @@ namespace ConsoleQuizApp
             Console.ReadLine();
         }
 
-        // Function to play a quiz
+        // Function for the user to play a quiz
         private void PlayQuiz()
         {
             Console.Clear();
-            List<Quiz> quizzes = _context.Quizzes.ToList<Quiz>();
+            List<Quiz> quizzes = _context.Quizzes.ToList<Quiz>(); // Get all quizzes from the database
             int counter = 1;
-            JObject listId = new JObject();
+            JObject listId = new JObject(); // Holds quiz ID and title pairs
             foreach (var q in quizzes)
             {
-                Console.WriteLine($"{counter}. {q.Title}");
+                Console.WriteLine($"{counter}. {q.Title}"); // Display quiz options
                 listId.Add(counter.ToString(), q.Id);
                 counter++;
             }
 
             Console.WriteLine("Enter quiz number.");
             string input = Console.ReadLine();
-            int QuizId = (int)listId.GetValue(input);
+            int QuizId = (int)listId.GetValue(input); // Get the selected quiz ID
 
-            Quiz userQuiz = _context.Quizzes.Single(q => q.Id == QuizId);
+            Quiz userQuiz = _context.Quizzes.Single(q => q.Id == QuizId); // Fetch quiz details
 
             Console.Clear();
             Console.WriteLine($"Welcome to quiz: {userQuiz.Title}");
@@ -201,16 +200,17 @@ namespace ConsoleQuizApp
             foreach (var q in userQuiz.Question)
             {
                 Console.Write("Question: ");
-                Console.WriteLine(q.QuestionText);
+                Console.WriteLine(q.QuestionText); // Display the question
                 Console.Write("Answer: ");
                 string answer = Console.ReadLine();
                 if (answer == q.CorrectAnswer)
                 {
-                    correctCounter++;
+                    correctCounter++; // Track correct answers
                 }
             }
             Console.WriteLine($"\nYou got {correctCounter} out of {userQuiz.Question.Count} questions correct.");
 
+            // Save the users results to the database
             QuizUser quizUser = new QuizUser
             {
                 Score = correctCounter,
@@ -232,20 +232,22 @@ namespace ConsoleQuizApp
             Console.WriteLine("\nPress Enter to return to the menu...");
             Console.ReadLine();
         }
+
+        // Helper function to save changes to the database
         private int SaveChanges()
         {
             int ret = 0;
             try
             {
-                ret = _context.SaveChanges();
+                ret = _context.SaveChanges(); // Commit changes to the database
             }
             catch (DbUpdateException dbEx)
             {
-                Console.WriteLine($"Database update error: {dbEx}");
+                Console.WriteLine($"Database update error: {dbEx}"); // Handle database-specific errors
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"General error: {ex.Message}");
+                Console.WriteLine($"General error: {ex.Message}"); // Handle other exceptions
             }
 
             return ret;
