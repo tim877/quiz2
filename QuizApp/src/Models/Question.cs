@@ -4,9 +4,9 @@ namespace ConsoleQuizApp
     public class Question
     {
         // Property for the question text (the actual question that will be asked in the quiz).
-        public string QuestionText { get; set; }
+        public string ?QuestionText { get; set; }
 
         // Property for the correct answer to the question.
-        public string CorrectAnswer { get; set; }
+        public string ?CorrectAnswer { get; set; }
     }
 }

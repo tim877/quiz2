@@ -26,12 +26,12 @@ public class QuizUser
 
     // Navigation property to the User entity (the user who completed the quiz).
     [Required]
-    public User User { get; set; }
+    public User ?User { get; set; }
 
     // Foreign key linking to the quiz that the user took.
     public int QuizId { get; set; }
 
     // Navigation property to the Quiz entity (the quiz the user participated in).
     [Required]
-    public Quiz Quiz { get; set; }
+    public Quiz ?Quiz { get; set; }
 }

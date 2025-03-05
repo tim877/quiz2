@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Formats.Asn1;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
@@ -9,7 +9,7 @@ namespace ConsoleQuizApp
     class QuizApp
     {
         private User loggedInUser; // Keeps track of the logged-in user, initially set to null
-        private Leaderboard leaderboard = new Leaderboard(); // Instance of leaderboard for displaying top scores
+        private Leaderboard leaderboard = new Leaderboard(); // Instance of leaderboard for displaying top scores (if needed elsewhere)
         private readonly AppDbContext _context; // Database context for interacting with the database
 
         // Constructor to initialize the AppDbContext
@@ -49,7 +49,7 @@ namespace ConsoleQuizApp
                         loggedInUser = userManager.Register(); // Attempt to register
                         if (loggedInUser != null) // Proceed if registration is successful
                         {
-                            //QuizMenu(quizzes);
+                            QuizMenu(); // Show quiz menu after successful registration
                         }
                     }
                     else if (choice == "3") // Exit option
@@ -80,7 +80,8 @@ namespace ConsoleQuizApp
                 Console.WriteLine("1. Create a new quiz");
                 Console.WriteLine("2. Play a quiz");
                 Console.WriteLine("3. View Leaderboard");
-                Console.WriteLine("4. Logout");
+                Console.WriteLine("4. Remove Account");
+                Console.WriteLine("5. Logout");
                 Console.Write("Choose an option: ");
                 string choice = Console.ReadLine();
 
@@ -96,7 +97,11 @@ namespace ConsoleQuizApp
                 {
                     ViewLeaderboard();
                 }
-                else if (choice == "4") // Logout
+                else if (choice == "4") // Remove account
+                {
+                    RemoveUserAccount(); // Remove the user's account and associated data
+                }
+                else if (choice == "5") // Logout
                 {
                     loggedInUser = null; // Reset logged-in user
                     Console.WriteLine("You have been logged out. Press Enter to return to the login menu...");
@@ -111,14 +116,64 @@ namespace ConsoleQuizApp
             }
         }
 
-        // View the leaderboard showing top users scores
+        // Updated ViewLeaderboard function that first displays a menu of quizzes
         private void ViewLeaderboard()
         {
             Console.Clear();
 
-            List<QuizUser> leaderboardList = leaderboard.getLeaderboard(); // Get leaderboard data
-            leaderboardList.ForEach(l => Console.WriteLine($"User: {l.User.Username} Quiz: {l.Quiz.Title} Score: {l.Score} Max Score: {l.MaxScore} Date: {l.CreatedAt}"));
+            // Get all quizzes from the database
+            List<Quiz> quizzes = _context.Quizzes.ToList<Quiz>();
+            if (quizzes == null || quizzes.Count == 0)
+            {
+                Console.WriteLine("No quizzes available.");
+                Console.WriteLine("Press Enter to return to the menu...");
+                Console.ReadLine();
+                return;
+            }
 
+            int counter = 1;
+            JObject listId = new JObject(); // Holds quiz ID and title pairs
+            foreach (var q in quizzes)
+            {
+                Console.WriteLine($"{counter}. {q.Title}");
+                listId.Add(counter.ToString(), q.Id);
+                counter++;
+            }
+
+            Console.WriteLine("Type a quiz number and press Enter to view its leaderboard (or just press Enter to cancel):");
+            string input = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(input) || !listId.ContainsKey(input))
+            {
+                // If no valid selection is made, return to the menu.
+                return;
+            }
+
+            int selectedQuizId = (int)listId.GetValue(input);
+
+            // Query the leaderboard data for the selected quiz
+            var quizLeaderboard = _context.QuizUsers
+                .Include(qu => qu.User)
+                .Include(qu => qu.Quiz)
+                .Where(qu => qu.QuizId == selectedQuizId)
+                .OrderByDescending(qu => qu.Score)
+                .ToList();
+
+            // Get the selected quiz's title
+            Quiz selectedQuiz = _context.Quizzes.FirstOrDefault(q => q.Id == selectedQuizId);
+            Console.Clear();
+            Console.WriteLine($"Leaderboard for quiz: {selectedQuiz?.Title}");
+            if (quizLeaderboard == null || quizLeaderboard.Count == 0)
+            {
+                Console.WriteLine("No leaderboard data for this quiz yet.");
+            }
+            else
+            {
+                foreach (var record in quizLeaderboard)
+                {
+                    Console.WriteLine($"User: {record.User?.Username} Score: {record.Score} / {record.MaxScore} Date: {record.CreatedAt}");
+                }
+            }
             Console.WriteLine("Press Enter to return to the menu...");
             Console.ReadLine();
         }
@@ -187,9 +242,21 @@ namespace ConsoleQuizApp
                 counter++;
             }
 
-            Console.WriteLine("Enter quiz number.");
+            // Prompt user for quiz selection
+            Console.WriteLine("Type quiz number and press Enter to play.");
             string input = Console.ReadLine();
-            int QuizId = (int)listId.GetValue(input); // Get the selected quiz ID
+
+            // Validate the input to ensure it's a valid number and exists in the list
+            if (string.IsNullOrWhiteSpace(input) || !listId.ContainsKey(input))
+            {
+                Console.WriteLine("Invalid selection. Please enter a valid quiz number.");
+                Console.WriteLine("Press Enter to return to the menu...");
+                Console.ReadLine();
+                return; // Return to the quiz menu without proceeding further
+            }
+
+            // Get the selected quiz ID
+            int QuizId = (int)listId.GetValue(input);
 
             Quiz userQuiz = _context.Quizzes.Single(q => q.Id == QuizId); // Fetch quiz details
 
@@ -210,7 +277,7 @@ namespace ConsoleQuizApp
             }
             Console.WriteLine($"\nYou got {correctCounter} out of {userQuiz.Question.Count} questions correct.");
 
-            // Save the users results to the database
+            // Save the user's results to the database
             QuizUser quizUser = new QuizUser
             {
                 Score = correctCounter,
@@ -231,6 +298,51 @@ namespace ConsoleQuizApp
 
             Console.WriteLine("\nPress Enter to return to the menu...");
             Console.ReadLine();
+        }
+
+        // Function to remove a user account and all associated data (quizzes, scores)
+        private void RemoveUserAccount()
+        {
+            Console.Clear();
+            Console.WriteLine("Are you sure you want to remove your account and all associated data? (y/n)");
+            string confirmation = Console.ReadLine();
+
+            if (confirmation.ToLower() == "y")
+            {
+                var userToDelete = _context.Users
+                    .Include(u => u.Quizzes)
+                        .ThenInclude(q => q.QuizUsers)  // Include related quiz users
+                    .FirstOrDefault(u => u.Id == loggedInUser.Id);
+
+                if (userToDelete != null)
+                {
+                    // Remove the user and related data will be cascaded automatically
+                    _context.Users.Remove(userToDelete);
+
+                    int result = SaveChanges();
+                    if (result > 0)
+                    {
+                        Console.WriteLine("Your account and all associated data have been removed.");
+                        loggedInUser = null; // Log out the user
+                        Console.WriteLine("Press Enter to return to the login menu...");
+                        Console.ReadLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to remove your account. Please try again.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("User not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Account removal cancelled.");
+                Console.WriteLine("Press Enter to return to the menu...");
+                Console.ReadLine();
+            }
         }
 
         // Helper function to save changes to the database
