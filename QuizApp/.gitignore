@@ -6,6 +6,9 @@
 # dotenv files
 .env
 
+# Ignore appsettings.json to keep it out of version control
+appsettings.json
+
 # User-specific files
 *.rsuser
 *.suo

@@ -8,7 +8,7 @@ namespace ConsoleQuizApp
 {
     class QuizApp
     {
-        private User loggedInUser; // Keeps track of the logged-in user, initially set to null
+        private User? loggedInUser; // Keeps track of the logged-in user, initially set to null
         private Leaderboard leaderboard = new Leaderboard(); // Instance of leaderboard for displaying top scores (if needed elsewhere)
         private readonly AppDbContext _context; // Database context for interacting with the database
 
@@ -54,6 +54,7 @@ namespace ConsoleQuizApp
                     }
                     else if (choice == "3") // Exit option
                     {
+                        Console.Clear();
                         break; // Exit the application
                     }
                     else
@@ -250,7 +251,7 @@ namespace ConsoleQuizApp
             if (string.IsNullOrWhiteSpace(input) || !listId.ContainsKey(input))
             {
                 Console.WriteLine("Invalid selection. Please enter a valid quiz number.");
-                Console.WriteLine("Press Enter to return to the menu...");
+                Console.WriteLine("Returning to the main menu... (Press enter)");
                 Console.ReadLine();
                 return; // Return to the quiz menu without proceeding further
             }
@@ -307,7 +308,7 @@ namespace ConsoleQuizApp
             Console.WriteLine("Are you sure you want to remove your account and all associated data? (y/n)");
             string confirmation = Console.ReadLine();
 
-            if (confirmation.ToLower() == "y")
+            if (confirmation?.ToLower() == "y")
             {
                 var userToDelete = _context.Users
                     .Include(u => u.Quizzes)

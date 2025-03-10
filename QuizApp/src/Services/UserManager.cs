@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleQuizApp
@@ -20,10 +20,31 @@ namespace ConsoleQuizApp
         public User Register()
         {
             Console.Clear();
-            Console.Write("Enter a username: ");
-            string username = Console.ReadLine(); // User input for username
-            Console.Write("Enter a password: ");
-            string password = ReadPassword(); // User input for password with masking
+            string username;
+            do
+            {
+                Console.Write("Enter a username: ");
+                username = Console.ReadLine(); // User input for username
+
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    Console.WriteLine("Username cannot be empty or null. Please try again.");
+                }
+
+            } while (string.IsNullOrWhiteSpace(username)); // Keep asking until a valid username is provided
+
+            string password;
+            do
+            {
+                Console.Write("Enter a password (between 4 and 255 characters): ");
+                password = ReadPassword(); // User input for password with masking
+
+                if (password.Length < 4 || password.Length > 255)
+                {
+                    Console.WriteLine("Password must be between 4 and 255 characters. Please try again.");
+                }
+
+            } while (password.Length < 4 || password.Length > 255); // Keep asking until a valid password is provided
 
             // Create a new User object
             User newUser = new User
@@ -82,8 +103,19 @@ namespace ConsoleQuizApp
         public User? Login()
         {
             Console.Clear();
-            Console.Write("Enter username: ");
-            string username = Console.ReadLine(); // User input for username
+            string username;
+            do
+            {
+                Console.Write("Enter username: ");
+                username = Console.ReadLine(); // User input for username
+
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    Console.WriteLine("Username cannot be empty or null. Please try again.");
+                }
+
+            } while (string.IsNullOrWhiteSpace(username)); // Keep asking until a valid username is provided
+
             Console.Write("Enter password: ");
             string password = ReadPassword(); // User input for password with masking
 

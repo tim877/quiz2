@@ -1,3 +1,4 @@
+using ConsoleQuizApp;
 public class QuizService
 {
     // Private field to hold the database context for interacting with the database
