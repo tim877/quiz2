@@ -1,1 +1,3 @@
 # quiz2
+
+The QuizApp is a C#-based application that allows users to register, log in, and create quizzes. Using PostgreSQL as the database and Entity Framework for ORM, the app links quizzes and high scores to individual users. Each user can create multiple quizzes, and their scores are tracked for each quiz they take. If a user is deleted, all associated quizzes and high scores are also removed, ensuring that data integrity is maintained. The app provides a seamless experience for both quiz creators and participants.
